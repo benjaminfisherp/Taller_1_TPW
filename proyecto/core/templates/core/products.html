@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h3>Productos</h3>
+
+<h5>Producto 1</h5>
+<h5>Producto 2</h5>
+<h5>Producto 3</h5>
+
+{% if user.is_authenticated %}
+
+	<hr>
+	<h4> 
+	{{user.username | upper}} , bienvenido
+	</h4>
+
+{% endif %} 
+
+{% endblock %}
