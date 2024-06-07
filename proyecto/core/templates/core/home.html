@@ -3,6 +3,63 @@
 {% block content %}
 
 <h3>Inicio</h3>
+ <!-- Carousel -->
+  <style>
+	.carousel-item {
+    height: 32rem;
+}
+  </style>
+ <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+	<div class="carousel-indicators">
+		<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" aria-label="Slide 1" class="active"
+			aria-current="true"></button>
+		<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"
+			class=""></button>
+		<button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"
+			class=""></button>
+	</div>
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+			<img src="https://lh6.googleusercontent.com/proxy/aYDc5vgKciY2nkAc5VWLBdj_9xk8wOutZjFeZSeUd08SMgs7fwvSIq15S2wOdhzutmLX63Zm9EkeSzfcZFSyU7aoSuxZY2DWwj5gMGCocJ__HcYTVBx_p-7pfRqssNOCAmzPa8QmmCLQ_6UG0CC6=w1296-h620" alt="" class="w-100">
+			<div class="container">
+				<div class="carousel-caption text-end">
+					<h1>Productos Naturales.</h1>
+					<p>Calidad a tu servicio.</p>
+			
+				</div>
+			</div>
+		</div>
+		<div class="carousel-item">
+			<img src="https://lh6.googleusercontent.com/proxy/B0zLRiUu9frhTHIYnuR7NN02zVggYERK83Uh9FPJAQHTzGHReA-TKJl7TVALYR284UpPa23ZCAerX5soheGD5hBACMWD3gcL-zTZaVx6G1j4Ks9GavTEZygRh-JK-DCFgxINLCtb3ubeovAt_eMKFLyF0I7H71LladU-JQ=w1296-h620" alt="" class="w-100">
+			<div class="container">
+				<div class="carousel-caption">
+					<h1>La mejor calidad.</h1>
+					<p>SUPERACOPIO es especialista en almacenamiento de frutas.</p>
+					
+				</div>
+			</div>
+		</div>
+		<div class="carousel-item">
+			<img src="https://lh5.googleusercontent.com/proxy/JYfSjGKrABGJ-zwOr5NHBJwGorq3pLPP65UG5zFpTkwlimI_bBVVKb5qahSC0PmvzssC8wYq8N3Nn2ocX-tf2Dl9VntPr-21S2G5Ve1nNZdOLCyBR65GkUeB=w1296-h620"
+				alt="" class="w-100">
+			<div class="container">
+				<div class="carousel-caption text-start">
+					<h1>SUPERACOPIO: Frescura garantizada.</h1>
+					
+		
+				</div>
+			</div>
+		</div>
+	</div>
+	<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+	</button>
+	<button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+	</button>
+</div>
 
 {% if user.is_authenticated %}
 

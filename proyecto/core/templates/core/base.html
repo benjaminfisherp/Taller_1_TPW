@@ -37,12 +37,12 @@
 						</li>
 
 						<li class="nav-item">
-							<a class="nav-link" href="{% url 'exit' %}">Salir</a>
-						</li>
-
-						<li class="nav-item">
 							<a class="nav-link" href="#" data-bs-toggle="modal"
-								data-bs-target="#contactModal">Contacto</a>
+								data-bs-target="#contactModal">Quienes somos</a>
+						</li>
+						
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'exit' %}">Salir</a>
 						</li>
 
 						{% else %}
@@ -65,25 +65,22 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="contactModalLabel">Contacto</h5>
+						<h5 class="modal-title" id="contactModalLabel"> Quines somos </h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<form id="contactForm" method="post" action="{% url 'contact' %}">
 							{% csrf_token %}
 							<div class="mb-3">
-								<label for="name" class="form-label">Nombre</label>
-								<input type="text" class="form-control" id="name" name="name" required>
+								<label for="name" class="form-label">SUPERACOPIO: Comprometidos con la Calidad y la Frescura</label>
 							</div>
+							
 							<div class="mb-3">
-								<label for="email" class="form-label">Correo Electrónico</label>
-								<input type="email" class="form-control" id="email" name="email" required>
+								
+								<p>SUPERACOPIO es una empresa líder en el acopio de frutas,dedicada a la recolección, selección y distribución de los productos más frescos y de la más alta calidad. 
+								</p>
 							</div>
-							<div class="mb-3">
-								<label for="message" class="form-label">Mensaje</label>
-								<textarea class="form-control" id="message" name="message" rows="3" required></textarea>
-							</div>
-							<button type="submit" class="btn btn-primary">Enviar</button>
+						
 						</form>
 					</div>
 				</div>
