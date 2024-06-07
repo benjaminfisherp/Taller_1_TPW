@@ -1,6 +1,6 @@
 <!-- template de registros -->
 
-{% extends 'core/base.html' %} 
+{% extends 'core/base.html' %}
 {% block content %}
 
 {% load crispy_forms_tags %}
@@ -8,18 +8,42 @@
 <br>
 <form action="" method="post">
 	<!-- seguridad del formulario tokenizado	 -->
-	{% csrf_token %}  
-
+	{% csrf_token %}
+	<!-- 
 	<div class="card mx-auto" style="width: 30rem;">
 		<div class="card-body">
 			<h5> Complete todos los campos para registrarse</h5>
 			{{form | crispy}}
-			<!-- <a href="{% url 'home' %}">Inicio</a> -->
-			<!-- <a href="{% url 'login' %}">Iniciar sesion</a> -->
 			<button class="btn btn-sm btn-primary float-end" type="submit">Registrarse</button>
 		</div>
 	</div>
-	
+	 -->
+
+	<div class="card mx-auto" style="width: 30rem;">
+		<div class="card-body">
+			<h5>Complete todos los campos para registrarse</h5>
+
+			<!-- Mostrar errores de formulario -->
+			{% if form.errors %}
+			<div class="alert alert-danger">
+				<ul>
+					{% for field in form %}
+					{% for error in field.errors %}
+					<li>{{ field.label }}: {{ error }}</li>
+					{% endfor %}
+					{% endfor %}
+					{% for error in form.non_field_errors %}
+					<li>{{ error }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+
+			{{ form|crispy }}
+			<button class="btn btn-sm btn-primary float-end" type="submit">Registrarse</button>
+		</div>
+	</div>
+
 </form>
 
 {% endblock %}
