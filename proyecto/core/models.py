@@ -41,15 +41,6 @@ class TablaVariedad(models.Model):
     def __str__(self):
         return self.variedad
 
-#TABLA FRUTAS
-class TablaFruta(models.Model): 
-    codigo_fruta = models.CharField(max_length=100, primary_key=True)
-    calidad_fruta = models.CharField(max_length=100, null=False)
-    variedad = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE, to_field='variedad')
-    especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE, to_field='especie')
-
-    def __str__(self):
-        return self.codigo_fruta
 #MODELOS AÚN NO IMPLEMENTADOS-----------------------------------------------------------------------------------------------------
 
 #ORDEN DE EGRESO DE FRUTA
@@ -57,21 +48,21 @@ class Egreso(models.Model):
 
     #egr <- egreso
     rut_prov_egr = models.ForeignKey(TablaCliente, on_delete=models.CASCADE, to_field='rut')
-    codigo_fruta_egr = models.ForeignKey(TablaFruta, on_delete=models.CASCADE, to_field='codigo_fruta')
+    codigo_fruta_egr = models.CharField(max_length=100)
     order_date_egr = models.DateTimeField()
     total_amount_egr = models.DecimalField(max_digits=10, decimal_places=2, null=False)
 
     def __str__(self):
-        return f'Order {self.id} from {self.rut_prov_ing.name}'
+        return self.id
     
 #ORDEN DE INGRESO DE FRUTA
 class Ingreso(models.Model):
     
     #ing <- ingreso
     rut_prov_ing = models.ForeignKey(TablaProv, on_delete=models.CASCADE, to_field='rut_prov')
-    codigo_fruta_ing = models.ForeignKey(TablaFruta, on_delete=models.CASCADE, to_field='codigo_fruta')
+    codigo_fruta_ing = models.CharField(max_length=100)
     order_date_ing = models.DateTimeField()
     total_amount_ing = models.DecimalField(max_digits=10, decimal_places=2, null=False)
 
     def __str__(self):
-        return f'Order {self.id} from {self.rut_prov_ord.name_prov}'
+        return self.id

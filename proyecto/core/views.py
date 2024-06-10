@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required # Incorporacion de "de
 from django.contrib.auth import logout
 from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login # Metodo para que despues de guardar registro inicia automaticamente la sesion
-from .models import TablaCliente, TablaProv, TablaFruta
+from .models import TablaCliente, TablaProv
 from django.http import JsonResponse
 # login_required = permite la necesidad de poder logear para ingresar a una vista
 # debe aplicarse como decorador delate de la funcion de vista 
@@ -72,8 +72,4 @@ def table_view_prov(request):
         data = list(TablaProv.objects.values())
         return JsonResponse({'data': data})
 	
-#FUNCION PARA VISUALIZAR LA TABLA DE FRUTAS
-def table_view_fruta(request):
-    if request.method == "GET":
-        data = list(TablaFruta.objects.values())
-        return JsonResponse({'data': data})
+

@@ -30,8 +30,6 @@
                     onclick="showHiddenButton()">Proveedores</button>
                 <button id="show-table-cliente" class="btn btn-primary w-100 mb-2"
                     onclick="showHiddenButton()">Clientes</button>
-                <button id="show-table-fruta" class="btn btn-primary w-100 mb-2"
-                    onclick="showHiddenButton()">Frutas</button>
             </div>
             <div class="col-md-9">
                 <div id="table-container"></div>
@@ -138,55 +136,6 @@
                     }
                 });
             });
-
-            $('#show-table-fruta').click(function () {
-                $.ajax({
-                    url: '{% url "table_view_fruta" %}',
-                    type: 'GET',
-                    success: function (response) {
-                        console.log(response.data); // Debug line
-                        let data = response.data;
-                        let table = `
-                    <table class="table table-bordered table-striped" style="text-align: center;">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Especie</th>
-                                <th>Variedad</th>
-                                <th>Calidad</th>
-                                <th><button id="btn_añadir" class="btn btn-success w-50 mb-2">Añadir</button></th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-                        data.forEach(function (item) {
-                            table += `
-                        <tr>
-                            <td>${item.codigo_fruta}</td>
-                            <td>${item.calidad_fruta}</td>
-                            <td>${item.variedad} </td>
-                            <td>${item.especie} </td>
-                            <td>
-                                <button id="btn_añadir" class="btn btn-warning w-50 mb-2">Modificar</button>
-                                <button id="btn_añadir" class="btn btn-danger w-50 mb-2">Eliminar</button>
-                            </td>
-                        </tr>`;
-                        });
-                        table += `
-                        </tbody>
-                    </table>`;
-                        $('#table-container').html(table);
-                    }
-                });
-            });
         });
     </script>
-    {% if user.is_authenticated %}
-
-    <hr>
-    <h4>
-        {{ user.username | upper }} , bienvenido
-    </h4>
-
-    {% endif %}
-
     {% endblock %}
