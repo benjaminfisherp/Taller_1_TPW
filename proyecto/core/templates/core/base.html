@@ -15,49 +15,54 @@
 
 		<!-- Navbar -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="{% url 'home' %}">SUPERACOPIO</a>
+		    <div class="container-fluid">
+		        <a class="navbar-brand" href="{% url 'home' %}">SuperAcopio</a>
 
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-					data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-					aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+		        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+		                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+		                aria-expanded="false" aria-label="Toggle navigation">
+		            <span class="navbar-toggler-icon"></span>
+		        </button>
 
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		                <!-- <li class="nav-item">
+		                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Inicio</a>
+		                </li> -->
 
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="{% url 'home' %}">Inicio</a>
-						</li>
+		                {% if user.is_authenticated %}
+		                <li class="nav-item">
+		                    <a class="nav-link" href="{% url 'products' %}">Productos</a>
+		                </li>
 
-						{% if user.is_authenticated %}
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'products' %}">Productos</a>
-						</li>
+		                <li class="nav-item">
+		                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Nosotros</a>
+		                </li>
 
-						<li class="nav-item">
-							<a class="nav-link" href="#" data-bs-toggle="modal"
-								data-bs-target="#contactModal">Quienes somos</a>
-						</li>
-						
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'exit' %}">Salir</a>
-						</li>
+						{% if user.is_authenticated and user.is_staff %}
+		                <li class="nav-item">
+		                    <a class="nav-link" href="{% url 'register' %}">Registrar usuarios</a>
+		                </li>
+		                {% endif %}
 
-						{% else %}
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'login' %}">Iniciar sesion</a>
-						</li>
+		                <li class="nav-item">
+		                    <a class="nav-link" href="{% url 'exit' %}">Cerrar sesion</a>
+		                </li>
 
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'register' %}">Registrarse</a>
-						</li>
-						{% endif %}
+		                {% else %}
+		                <li class="nav-item">
+		                    <a class="nav-link" href="{% url 'login' %}">Iniciar sesion</a>
+		                </li>
+		                {% endif %}
 
-					</ul>
-				</div>
-			</div>
+		                <!-- {% if user.is_authenticated and user.is_staff %}
+		                <li class="nav-item">
+		                    <a class="nav-link" href="{% url 'register' %}">Registrar usuarios</a>
+		                </li>
+		                {% endif %} -->
+		            </ul>
+		        </div>
+		    </div>
 		</nav>
 
 		<!-- Modal -->
@@ -72,12 +77,12 @@
 						<form id="contactForm" method="post" action="{% url 'contact' %}">
 							{% csrf_token %}
 							<div class="mb-3">
-								<label for="name" class="form-label">SUPERACOPIO: Comprometidos con la Calidad y la Frescura</label>
+								<label for="name" class="form-label">SuperAcopio: Comprometidos con la Calidad y la Frescura</label>
 							</div>
 							
 							<div class="mb-3">
 								
-								<p>SUPERACOPIO es una empresa líder en el acopio de frutas,dedicada a la recolección, selección y distribución de los productos más frescos y de la más alta calidad. 
+								<p>SuperAcopio es una empresa líder en el acopio de frutas,dedicada a la recolección, selección y distribución de los productos más frescos y de la más alta calidad. 
 								</p>
 							</div>
 						

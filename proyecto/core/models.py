@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 #TABLA DE CLIENTES
 class TablaCliente(models.Model):
@@ -66,3 +68,27 @@ class Ingreso(models.Model):
 
     def __str__(self):
         return self.id
+    
+
+# MODELOS ORIENTADOS A LOS ROLES------------------------------------------
+
+# cuenta de usuario
+class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account', verbose_name='Usuario')
+    telephone = models.CharField(max_length=50, null=True, blank=True, verbose_name='Telefono')
+    class Meta:
+        verbose_name='usuario'
+        verbose_name_plural='usuarios'
+        ordering = ['-id']
+    def __str__(self):
+        return self.user.username
+    
+def create_user_account(sender, instance, created, **kwargs):
+    if created:
+        Account.objects.create(user=instance)
+        
+def save_user_account(sender, instance, **kwargs):
+    instance.account.save()
+    
+post_save.connect(create_user_account, sender=User)
+post_save.connect(save_user_account, sender=User)
