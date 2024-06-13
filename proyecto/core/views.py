@@ -10,6 +10,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CustomUserChangeForm
+from django.template.loader import render_to_string
 
 # login_required = permite la necesidad de poder logear para ingresar a una vista
 # debe aplicarse como decorador delate de la funcion de vista 
@@ -85,7 +86,6 @@ def lista_usuarios(request):
     users = User.objects.all()
     return render(request, 'core/lista_usuarios.html', {'users': users})
 
-
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='Administrativos').exists())
 def editar_usuarios(request, user_id):
@@ -94,10 +94,15 @@ def editar_usuarios(request, user_id):
         form = CustomUserChangeForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('user_list')
+            return JsonResponse({'success': True})
+        else:
+            form_html = render_to_string('core/editar_usuarios_form.html', {'form': form, 'user': user})
+            return JsonResponse({'success': False, 'form': form_html})
     else:
         form = CustomUserChangeForm(instance=user)
-    return render(request, 'core/editar_usuarios.html', {'form': form})
+        form_html = render_to_string('core/editar_usuarios_form.html', {'form': form, 'user': user})
+        return JsonResponse({'form': form_html, 'url': request.path})
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='Administrativos').exists())
@@ -105,8 +110,9 @@ def eliminar_usuarios(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         user.delete()
-        return redirect('user_list')
+        return redirect('lista_usuarios')
     return render(request, 'core/eliminar_usuarios.html', {'user': user})
+
 
 
 
