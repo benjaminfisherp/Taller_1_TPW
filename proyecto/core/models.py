@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.contrib.auth.models import AbstractUser, Group, Permission
+
+
 
 #TABLA DE CLIENTES
 class TablaCliente(models.Model):
@@ -92,3 +95,27 @@ def save_user_account(sender, instance, **kwargs):
     
 post_save.connect(create_user_account, sender=User)
 post_save.connect(save_user_account, sender=User)
+
+
+
+class CustomUser(AbstractUser):
+    groups = models.ManyToManyField(
+        Group,
+        related_name='customuser_set',  # Cambia a un related_name único
+        blank=True,
+        help_text=('The groups this user belongs to. A user will get all permissions '
+                   'granted to each of their groups.'),
+        verbose_name=('groups'),
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='customuser_set',  # Cambia a un related_name único
+        blank=True,
+        help_text=('Specific permissions for this user.'),
+        verbose_name=('user permissions'),
+    )
+
+    @property
+    def is_administrativos(self):
+        return self.groups.filter(name='Administrativos').exists()
+

@@ -5,42 +5,42 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login # Metodo para que despues de guardar registro inicia automaticamente la sesion
 from .models import TablaCliente, TablaProv
 from django.http import JsonResponse
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import CustomUserChangeForm
+
 # login_required = permite la necesidad de poder logear para ingresar a una vista
 # debe aplicarse como decorador delate de la funcion de vista 
 
 #@login_required
 # Define "home"
+
+
+@login_required
 def home(request):
-	return render(request, 'core/home.html')
+    is_admin = request.user.is_authenticated and (request.user.is_superuser or request.user.groups.filter(name='Administrativos').exists())
+    return render(request, 'core/home.html', {'is_admin': is_admin})
 
-@login_required 
-# si login required estuviee aqui, al estar despues de la vista NO encuentra TEMPLATED y marca error de template obviamente 
-# Define products o el contenido
+
+
+@login_required
 def products(request):
-	return render(request, 'core/products.html')
+    is_admin = request.user.is_superuser or request.user.groups.filter(name='Administrativos').exists()
+    return render(request, 'core/products.html', {'is_admin': is_admin})
 
-def contact(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
 
-        # Aquí puedes manejar el envío del correo o guardar la información en la base de datos
-        send_mail(
-            f'Mensaje de {name}',
-            message,
-            email,
-            [settings.EMAIL_HOST_USER],
-            fail_silently=False,
-        )
 
-        return HttpResponse('Gracias por tu mensaje. Nos pondremos en contacto contigo pronto.')
-    
-    return render(request, 'core/contact.html')
 
 def exit(request):
 	logout(request)
 	return redirect('home')
+
+
+def is_admin(user):
+    return user.is_superuser or user.groups.filter(name='Administrativos').exists()
+
 
 def register(request):
     data = {
@@ -61,15 +61,52 @@ def register(request):
     return render(request, 'registration/register.html', data)
 
 #FUNCION PARA VISUALIZAR LA TABLA DE CLIENTE
+@user_passes_test(is_admin)
 def table_view_cliente(request):
     if request.method == "GET":
         data = list(TablaCliente.objects.values())
         return JsonResponse({'data': data})
 
 #FUNCION PARA VISUALIZAR LA TABLA DE PROVEEDORES
+@user_passes_test(is_admin)
 def table_view_prov(request):
     if request.method == "GET":
         data = list(TablaProv.objects.values())
         return JsonResponse({'data': data})
-	
+
+
+
+
+User = get_user_model()
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='Administrativos').exists())
+def lista_usuarios(request):
+    users = User.objects.all()
+    return render(request, 'core/lista_usuarios.html', {'users': users})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='Administrativos').exists())
+def editar_usuarios(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user_list')
+    else:
+        form = CustomUserChangeForm(instance=user)
+    return render(request, 'core/editar_usuarios.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='Administrativos').exists())
+def eliminar_usuarios(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+        return redirect('user_list')
+    return render(request, 'core/eliminar_usuarios.html', {'user': user})
+
+
 
