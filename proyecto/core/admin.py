@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, Account
+from .models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, Account, Ingreso, Egreso
 #from .models import Account
 
 
@@ -8,6 +8,8 @@ admin.site.register(TablaCliente) #PERMISO PARA AÑADIR REGISTROS DE CLIENTE COM
 admin.site.register(TablaProv) #PERMISO PARA AÑADIR REGISTROS DE PROVEEDORES COMO ADMIN
 admin.site.register(TablaVariedad) #PERMISO PARA AÑADIR REGISTROS DE VARIEDAD COMO ADMIN
 admin.site.register(TablaEspecie) #PERMISO PARA AÑADIR REGISTROS DE ESPECIE COMO ADMIN
+admin.site.register(Ingreso) #PERMISO PARA AÑADIR REGISTROS DE ESPECIE COMO ADMIN
+admin.site.register(Egreso) #PERMISO PARA AÑADIR REGISTROS DE ESPECIE COMO ADMIN
 
 # Cuenta detallada
 class AccountAdmin(admin.ModelAdmin):

@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required # Incorporacion de "decorador"
 from django.contrib.auth import logout
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ClienteForm, ProvForm
 from django.contrib.auth import authenticate, login # Metodo para que despues de guardar registro inicia automaticamente la sesion
-from .models import TablaCliente, TablaProv
+from .models import TablaCliente, TablaProv, Ingreso, Egreso
+from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,13 +12,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CustomUserChangeForm
 from django.template.loader import render_to_string
-
-# login_required = permite la necesidad de poder logear para ingresar a una vista
-# debe aplicarse como decorador delate de la funcion de vista 
-
-#@login_required
-# Define "home"
-
 
 @login_required
 def home(request):
@@ -68,6 +62,30 @@ def table_view_cliente(request):
         data = list(TablaCliente.objects.values())
         return JsonResponse({'data': data})
 
+def add_cliente(request):
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('products')
+    else:
+        form = ClienteForm()
+    return render(request, 'core/agregar_cliente.html', {'form': form})
+
+# def eliminar_cliente(request, cliente_id):
+#     persona = get_object_or_404(TablaCliente, id=cliente_id)
+#     if request.method == 'POST':
+#         persona.delete()
+#         return JsonResponse({'success': True})
+#     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+def eliminar_persona(request, persona_id):
+    if request.method == "POST":
+        persona = get_object_or_404(TablaCliente, id=persona_id)
+        persona.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
 #FUNCION PARA VISUALIZAR LA TABLA DE PROVEEDORES
 @user_passes_test(is_admin)
 def table_view_prov(request):
@@ -75,8 +93,29 @@ def table_view_prov(request):
         data = list(TablaProv.objects.values())
         return JsonResponse({'data': data})
 
+def add_prov(request):
+    if request.method == 'POST':
+        form = ProvForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('products')
+    else:
+        form = ProvForm()
+    return render(request, 'core/agregar_prov.html', {'form': form})
 
-
+#FUNCION PARA VISUALIZAR LA TABLA DE INGRESOS
+@user_passes_test(is_admin)
+def table_view_ing(request):
+    if request.method == "GET":
+        data = list(Ingreso.objects.values())
+        return JsonResponse({'data': data})
+    
+#FUNCION PARA VISUALIZAR LA TABLA DE EGRESOS
+@user_passes_test(is_admin)
+def table_view_egr(request):
+    if request.method == "GET":
+        data = list(Egreso.objects.values())
+        return JsonResponse({'data': data})
 
 User = get_user_model()
 

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 	'crispy_forms', #añadido para crispy forms (decorado de Bootstrap)
 	'crispy_bootstrap5', #añadido para crispy forms (decorado de Bootstrap) 
 	#'apps.CoreConfig' #importa desde core>apps las signals para gestionar usuarios registrados en un grupo
+    'widget_tweaks'
 ]
 
 # Variables Globales de bootstrap
