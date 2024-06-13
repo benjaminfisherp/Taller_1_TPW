@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include # se incluye include para solucionar error de rutas de admin
 from .views import home, products, exit, register, table_view_cliente, table_view_prov, table_view_ing, table_view_egr
 from .views import lista_usuarios, editar_usuarios, eliminar_usuarios, add_cliente, add_prov, eliminar_persona
+from .views import table_view_especies, table_view_variedades, add_especie, add_variedad
 #from . import views ESTO NOS SERVIRÁ PARA ELIMINAR LAS LINEAS 3 Y 4 (ESTETICA DEL CODIGO)
 
 urlpatterns = [
@@ -19,4 +20,8 @@ urlpatterns = [
     path('agregar/', add_cliente, name='AddCliente'),
     path('agregar_prov/', add_prov, name='agregar_prov'),
     path('eliminar/<int:persona_id>/', eliminar_persona, name='eliminar_persona'),
+    path('get-esp-data/',table_view_especies, name = 'table_view_esp'),
+    path('get-var-data/',table_view_variedades, name = 'table_view_var'),
+    path('agregar-especie/', add_especie, name='AddEspecie'),
+    path('agregar-variedad/', add_variedad, name='AddVariedad'),
 ]

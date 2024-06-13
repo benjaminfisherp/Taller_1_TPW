@@ -92,6 +92,12 @@
 
                 <!--BOTON TABLA EGRESOS-->
                 <button id="show-table-egr" class="btn btn-primary w-100 mb-2">Egresos</button>
+
+                <!--BOTON TABLA ESPECIE-->
+                <button id="show-table-esp" class="btn btn-primary w-100 mb-2">Especies</button>
+
+                <!--BOTON TABLA VARIEDAD-->
+                <button id="show-table-var" class="btn btn-primary w-100 mb-2">Variedades</button>
             </div>
             <div class="col-md-9">
                 <div id="table-container"></div>
@@ -327,6 +333,92 @@
                         } else {
                             alert('Error al eliminar la persona.');
                         }
+                    }
+                });
+            });
+
+            //VISUALIZACION TABLA ESPECIES
+            $('#show-table-esp').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_esp" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>                        
+                                <th>Nombre especie</th>
+                                <th>
+                                    <a href="/agregar-especie" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar especie</button>
+                                    </a>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>                 
+                            <td>${item.especie}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <a href="/eliminar_persona/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-danger w-100 mb-2" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                </a>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //VISUALIZACION TABLA VARIEDAD
+            $('#show-table-var').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_var" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>                        
+                                <th>Nombre especie</th>
+                                <th>Nombre variedad</th>
+                                <th>
+                                    <a href="/agregar-variedad/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar cliente</button>
+                                    </a>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>                 
+                            <td>${item.especie_id}</td>
+                            <td>${item.variedad}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <a href="/eliminar_persona/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-danger w-100 mb-2" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                </a>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
                     }
                 });
             });

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User # Importa la base de datos de usuarios para tener mayor cantidad de data para el registro (mail y demas)
 from django.contrib.auth import get_user_model
-from core.models import TablaCliente, TablaProv
+from core.models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -41,3 +41,13 @@ class ProvForm(forms.ModelForm):
         model = TablaProv
         fields = {'name_prov','rut_prov','correo_prov','telefono_prov','razon_social_prov',
                   'direccion_prov','region_prov','comuna_prov','ncontacto_prov'}
+
+class EspecieForm(forms.ModelForm):
+    class Meta:
+        model = TablaEspecie
+        fields = {'especie'}
+        
+class VariedadForm(forms.ModelForm):
+    class Meta:
+        model = TablaVariedad
+        fields = {'especie','variedad'}
