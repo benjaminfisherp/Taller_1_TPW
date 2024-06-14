@@ -1,32 +1,27 @@
-"""
-URL configuration for proyecto project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.contrib import admin
-from django.urls import path
-from .views import home, products, exit, register, table_view_cliente, table_view_prov, table_view_fruta, contact
+from django.urls import path, include # se incluye include para solucionar error de rutas de admin
+from .views import home, products, exit, register, table_view_cliente, table_view_prov, table_view_ing, table_view_egr
+from .views import lista_usuarios, editar_usuarios, eliminar_usuarios, add_cliente, add_prov, eliminar_persona
+from .views import table_view_especies, table_view_variedades, add_especie, add_variedad
+#from . import views ESTO NOS SERVIRÁ PARA ELIMINAR LAS LINEAS 3 Y 4 (ESTETICA DEL CODIGO)
 
 urlpatterns = [
 	path('', home, name='home'),
-    path('admin/', admin.site.urls),
-	path('products/', products, name='products'),
-    path('contact/', contact, name='contact'),
-	path('logout/', exit, name='exit'),
-	path('register/', register, name='register'),
-    path('get-cliente-data/', table_view_cliente, name='table_view_cliente'), #VISUALIZACION TABLA CLIENTE
-    path('get-prov-data/', table_view_prov, name='table_view_prov'), #VISUALIZACION TABLA PROVEEDORES
-    path('get-prov-fruta/', table_view_fruta, name='table_view_fruta'), #VISUALIZACION TABLA FRUTA
+    path('products/', products, name='products'),
+    path('logout/', exit, name='exit'),
+    path('register/', register, name='register'),
+    path('get-cliente-data/', table_view_cliente, name='table_view_cliente'),
+    path('get-prov-data/', table_view_prov, name='table_view_prov'),
+    path('get-ing-data/', table_view_ing, name='table_view_ing'),
+    path('get-egr-data/', table_view_egr, name='table_view_egr'),
+    path('users/', lista_usuarios, name='lista_usuarios'),
+    path('users/edit/<int:user_id>/', editar_usuarios, name='editar_usuarios'),
+    path('users/delete/<int:user_id>/', eliminar_usuarios, name='eliminar_usuarios'),
+    path('agregar/', add_cliente, name='AddCliente'),
+    path('agregar_prov/', add_prov, name='agregar_prov'),
+    path('eliminar/<int:persona_id>/', eliminar_persona, name='eliminar_persona'),
+    path('get-esp-data/',table_view_especies, name = 'table_view_esp'),
+    path('get-var-data/',table_view_variedades, name = 'table_view_var'),
+    path('agregar-especie/', add_especie, name='AddEspecie'),
+    path('agregar-variedad/', add_variedad, name='AddVariedad'),
 ]
