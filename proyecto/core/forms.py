@@ -1,19 +1,8 @@
-# Fichero creado para ser el formulario de creacion de usuario
-# No se crea database ni formulario, solo se instancia aqui usando liberias django
-# De hecho, tambien se genera de antemano la estetica del formulario 
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User # Importa la base de datos de usuarios para tener mayor cantidad de data para el registro (mail y demas)
-
-# Fomrulario personalizado que usa plantilla creator form 
-# class CustomUserCreationForm(UserCreationForm):
-	
-# 	class Meta:
-# 		model = User
-# 		# Customizacion de data para registro
-# 		fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
-
+from django.contrib.auth import get_user_model
+from core.models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -34,3 +23,31 @@ class CustomUserCreationForm(UserCreationForm):
         if len(password1) < 8:
             raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
         return password2
+
+User = get_user_model()
+
+class CustomUserChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'is_active', 'is_staff')
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = TablaCliente
+        fields = ('name','rut','correo','telefono','razon_social')
+
+class ProvForm(forms.ModelForm):
+    class Meta:
+        model = TablaProv
+        fields = {'name_prov','rut_prov','correo_prov','telefono_prov','razon_social_prov',
+                  'direccion_prov','region_prov','comuna_prov','ncontacto_prov'}
+
+class EspecieForm(forms.ModelForm):
+    class Meta:
+        model = TablaEspecie
+        fields = {'especie'}
+        
+class VariedadForm(forms.ModelForm):
+    class Meta:
+        model = TablaVariedad
+        fields = {'especie','variedad'}
