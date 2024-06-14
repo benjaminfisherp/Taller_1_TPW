@@ -1,0 +1,25 @@
+<!-- templates de logeos -->
+
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% load crispy_forms_tags %}
+<h3>Inicie sesion para poder visualizar los productos</h3>
+
+<form action="" method="post">
+	<!-- seguridad del formulario tokenizado	 -->
+	{% csrf_token %}
+
+	<!-- {{form | crispy}} -->
+	<div class="card" style="width: 30rem;">
+		<div class="card-body">
+			<h5 class="card-title"> Inicie su sesion aquí </h5>
+			{{form | crispy}}
+			<!-- <a href="{% url 'home' %}">Inicio</a> -->
+			<!-- <a href="{% url 'register' %}">Si no tienes cuenta, registrarse aquí</a> -->
+			<button class="btn btn-sm btm-primary float-end" type="submit">Iniciar sesion</button>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

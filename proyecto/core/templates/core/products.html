@@ -1,0 +1,427 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" conctent="witdh=device-width, initial-sacle=1.0">
+    <title>Products.html</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+    <!--<script src="{% static 'index/js/b4.js' %}">-->
+
+    <style></style>
+
+</head>
+
+<body>
+    <!--MODAL DE CONFIRMACION DE ELIMINACION DE CLIENTE-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar a <span id="personaNombre"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Sí, eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--MODAL PARA INGRESAR CLIENTES-->
+    <div id="AgregarPersonalModal" class="modal" style="overflow: scroll;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-dark">Agregar nuevo</h5>
+                </div>
+                <div class="modal-body bg-dark text-white">
+                    <form method="POST" action="{% url 'AddCliente' %}" enctype="multipart/form-data">{% csrf_token %}
+                        {% for field in form_add %}
+                        <p>{{field.label}} <br>
+                            {{field|add_class:"form-control text-dark"}}</p>
+                        {% for error in field.errors %}
+                        <p class="alarma">{{error}}</p>
+                        {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <p class="alarma">{{error}}</p>
+                        {% endfor %}
+                </div>
+                <div class="modal-footer bg-dark">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        Agregar
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <br><br>
+        <div class="row">
+            <div class="col-md-2">
+                <!--BOTON TABLA PROVEEDORES-->
+                <button id="show-table-prov" class="btn btn-primary w-100 mb-2">Proveedores</button>
+
+                <!--BOTON TABLA CLIENTES-->
+                <button id="show-table-cliente" class="btn btn-primary w-100 mb-2">Clientes</button>
+
+                <!--BOTON TABLA INGRESOS-->
+                <button id="show-table-ing" class="btn btn-primary w-100 mb-2">Ingresos</button>
+
+                <!--BOTON TABLA EGRESOS-->
+                <button id="show-table-egr" class="btn btn-primary w-100 mb-2">Egresos</button>
+
+                <!--BOTON TABLA ESPECIE-->
+                <button id="show-table-esp" class="btn btn-primary w-100 mb-2">Especies</button>
+
+                <!--BOTON TABLA VARIEDAD-->
+                <button id="show-table-var" class="btn btn-primary w-100 mb-2">Variedades</button>
+            </div>
+            <div class="col-md-9">
+                <div id="table-container"></div>
+            </div>
+            <div class="col-md-1">
+                <!--<button>NADA</button>-->
+            </div>
+        </div>
+    </div>
+    <br>
+    <script>
+        $(document).ready(function () {
+
+            //VISUALIZACION DE LA TABLA DE CLIENTES //<button href="#AgregarPersonalModal" class="btn btn-success w-50 mb-2">Añadir</button>
+            $('#show-table-cliente').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_cliente" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>                        
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>RUT</th>
+                                <th>Correo</th>
+                                <th>Razón social</th>
+                                <th>
+                                    <a href="/agregar" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar cliente</button>
+                                    </a>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>                 
+                            <td>${item.name}</td>
+                            <td>${item.telefono}</td>
+                            <td>${item.rut}</td>
+                            <td>${item.correo}</td>
+                            <td>${item.razon_social}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <a href="/eliminar_persona/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-danger w-100 mb-2" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                </a>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //VISUALIZACION DE LA TABLA DE PROVEEDORES
+            $('#show-table-prov').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_prov" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>RUT</th>
+                                <th>Correo</th>
+                                <th>Razón social</th>
+                                <th>Dirección</th>
+                                <th>Región</th>
+                                <th>Comuna</th>
+                                <th>Nombre de contacto</th>
+                                <th>
+                                    <a href="/agregar_prov" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar cliente</button>
+                                    </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>
+                            <td>${item.name_prov}</td>
+                            <td>${item.telefono_prov}</td>
+                            <td>${item.rut_prov}</td>
+                            <td>${item.correo_prov}</td>
+                            <td>${item.razon_social_prov}</td>
+                            <td>${item.direccion_prov}</td>
+                            <td>${item.region_prov}</td>
+                            <td>${item.comuna_prov}</td>
+                            <td>${item.ncontacto_prov}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <button id="btn_añadir" class="btn btn-danger w-100 mb-2">Eliminar</button>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //VISUALIZACION DE LA TABLA DE INGRESOS
+            $('#show-table-ing').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_ing" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Rut proveedor</th>
+                                <th>Codigo</th>
+                                <th>Fecha de ingreso</th>
+                                <th>Especie</th>
+                                <th>Variedad</th>
+                                <th>Calidad</th>
+                                <th>Cantidad</th>
+                                <th><button id="btn_añadir" class="btn btn-success w-100 mb-2">Añadir</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>
+                            <td>${item.rut_prov_ing_id}</td>
+                            <td>${item.codigo_fruta_ing}</td>
+                            <td>${item.order_date_ing}</td>
+                            <td>${item.especie_id}</td>
+                            <td>${item.variedad_id}</td>
+                            <td>${item.calidad_fruta_ing}</td>
+                            <td>${item.cantidad_ing}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <button id="btn_añadir" class="btn btn-danger w-100 mb-2">Eliminar</button>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //VISUALIZACION DE LA TABLA DE EGRESOS
+            $('#show-table-egr').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_egr" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Rut cliente</th>
+                                <th>Codigo</th>
+                                <th>Fecha de egreso</th>
+                                <th>Especie</th>
+                                <th>Variedad</th>
+                                <th>Calidad</th>
+                                <th>Cantidad</th>
+                                <th><button id="btn_añadir" class="btn btn-success w-100 mb-2">Añadir</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>
+                            <td>${item.rut_prov_egr_id}</td>
+                            <td>${item.codigo_fruta_egr}</td>
+                            <td>${item.order_date_egr}</td>
+                            <td>${item.especie_id}</td>
+                            <td>${item.variedad_id}</td>
+                            <td>${item.calidad_fruta_egr}</td>
+                            <td>${item.cantidad_egr}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <button id="btn_añadir" class="btn btn-danger w-100 mb-2">Eliminar</button>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //ELIMINACION DE CLIENTEvar personaId;
+            $('#deleteModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                personaId = button.data('id');
+                var personaName = button.data('name');
+                var modal = $(this);
+                modal.find('#personaNombre').text(personaName);
+            });
+
+            $('#confirmDelete').click(function() {
+                $.ajax({
+                    url: '{% url "eliminar_persona" 0 %}'.replace('0', personaId),
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#deleteModal').modal('hide');
+                            location.reload();  // Recarga la página para actualizar la lista
+                        } else {
+                            alert('Error al eliminar la persona.');
+                        }
+                    }
+                });
+            });
+
+            //VISUALIZACION TABLA ESPECIES
+            $('#show-table-esp').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_esp" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>                        
+                                <th>Nombre especie</th>
+                                <th>
+                                    <a href="/agregar-especie" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar especie</button>
+                                    </a>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>                 
+                            <td>${item.especie}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <a href="/eliminar_persona/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-danger w-100 mb-2" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                </a>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+
+            //VISUALIZACION TABLA VARIEDAD
+            $('#show-table-var').click(function () {
+                $.ajax({
+                    url: '{% url "table_view_var" %}',
+                    type: 'GET',
+                    success: function (response) {
+                        console.log(response.data); // Debug line
+                        let data = response.data;
+                        let table = `
+                    <table class="table table-bordered table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>                        
+                                <th>Nombre especie</th>
+                                <th>Nombre variedad</th>
+                                <th>
+                                    <a href="/agregar-variedad/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-success w-100 mb-2">Agregar cliente</button>
+                                    </a>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(function (item) {
+                            table += `
+                        <tr>                 
+                            <td>${item.especie_id}</td>
+                            <td>${item.variedad}</td>
+                            <td>
+                                <button id="btn_añadir" class="btn btn-warning w-100 mb-2">Modificar</button>
+                                <a href="/eliminar_persona/" data-toggle="modal" data-dismiss="modal">
+                                        <button class="btn btn-danger w-100 mb-2" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                </a>
+                            </td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
+                        $('#table-container').html(table);
+                    }
+                });
+            });
+        });
+    </script>
+    {% endblock %}
