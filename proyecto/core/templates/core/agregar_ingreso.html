@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Usuario</title>
+    <title>Agregar Ingreso</title>
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
         }
-        .container {
+         .container {
             max-width: 600px;
             margin: 0 auto;
             background-color: #fff;
@@ -19,16 +18,15 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #007bff;
-            text-align: center;
-            margin-bottom: 30px;
-        }
         form {
             max-width: 400px;
             margin: 0 auto;
         }
-        label {
+        h1 {
+            color: rgb(41, 70, 231);
+            text-align: center;
+            margin-bottom: 30px;
+        } label {
             display: block;
             margin-bottom: 10px;
             color: #333;
@@ -41,6 +39,7 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+
         button[type="submit"] {
             background-color: #28a745;
             color: #fff;
@@ -54,22 +53,31 @@
         button[type="submit"]:hover {
             background-color: #218838;
         }
+        a{
+            background-color: #ec0c0c;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Editar Usuario</h1>
+        <h1>Agregar Ingreso</h1>
         <form method="post">
             {% csrf_token %}
-            <label for="id_first_name">Nombre:</label>
-            {{ form.first_name }}
-            <label for="id_last_name">Apellido:</label>
-            {{ form.last_name }}
-            <label for="id_email">Correo electrónico:</label>
-            {{ form.email }}
-            <button type="submit">Guardar Cambios</button>
-            <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+            {{ form.as_p }}
+            
+            <button type="submit">Guardar</button>
+            <a href="{% url 'products' %}" class="btn btn-secondary mt-3">Volver</a>
         </form>
     </div>
 </body>
 </html>
+
+   
+</body>

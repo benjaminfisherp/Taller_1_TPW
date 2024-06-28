@@ -10,7 +10,7 @@ class TablaCliente(models.Model):
     name = models.CharField(max_length=100, null=False)
     rut = models.CharField(max_length=100, unique=True)
     correo = models.EmailField(null=False, blank=False)
-    telefono = models.IntegerField(unique=True) 
+    telefono = models.IntegerField(unique=False) 
     razon_social = models.CharField(max_length=100,default=' - ')
 
     def __str__(self):
@@ -21,7 +21,7 @@ class TablaProv(models.Model):
     name_prov = models.CharField(max_length=100)
     rut_prov = models.CharField(max_length=100, unique=True)
     correo_prov = models.EmailField(null=False, blank=False)
-    telefono_prov = models.IntegerField(unique=True) 
+    telefono_prov = models.IntegerField(unique=False) 
     razon_social_prov = models.CharField(max_length=100)
     direccion_prov = models.CharField(max_length=100, null=False)
     region_prov = models.CharField(max_length=100, null=False)
@@ -105,7 +105,7 @@ post_save.connect(save_user_account, sender=User)
 class CustomUser(AbstractUser):
     groups = models.ManyToManyField(
         Group,
-        related_name='customuser_set',  # Cambia a un related_name único
+        related_name='customuser_groups',  # Cambia a un related_name único
         blank=True,
         help_text=('The groups this user belongs to. A user will get all permissions '
                    'granted to each of their groups.'),
@@ -113,7 +113,7 @@ class CustomUser(AbstractUser):
     )
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name='customuser_set',  # Cambia a un related_name único
+        related_name='customuser_permissions',  # Cambia a un related_name único
         blank=True,
         help_text=('Specific permissions for this user.'),
         verbose_name=('user permissions'),

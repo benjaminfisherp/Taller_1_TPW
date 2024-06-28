@@ -10,11 +10,17 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Lista de Usuarios</h1>
+
+        <!-- Botón "Agregar Usuario" -->
+        <a href="{% url 'register' %}" class="btn btn-success mb-3"><i class="fas fa-user-plus"></i> Agregar Usuario</a>
+
         <div class="table-responsive">
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">Username</th>
+                        <th scope="col">first_name</th>
+                        <th scope="col">last_name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Acciones</th>
                     </tr>
@@ -23,9 +29,11 @@
                     {% for user in users %}
                     <tr>
                         <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                            <button class="btn btn-primary btn-sm me-2 edit-btn" data-id="{{ user.id }}" data-bs-toggle="modal" data-bs-target="#editUserModal">Editar</button>
+                            <a href="{% url 'editar_usuarios' user.id %}" class="btn btn-primary btn-sm me-2">Editar</a>
                             <a href="{% url 'eliminar_usuarios' user.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                         </td>
                     </tr>
@@ -36,61 +44,8 @@
         <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Volver a la página principal</a>
     </div>
 
-    <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editUserForm" method="post">
-                        {% csrf_token %}
-                        <div id="editUserFormContent">
-                            <!-- El contenido del formulario se cargará aquí -->
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.edit-btn').click(function() {
-                var userId = $(this).data('id');
-                $.ajax({
-                    url: "{% url 'editar_usuarios' 0 %}".replace('0', userId),
-                    method: "GET",
-                    success: function(data) {
-                        $('#editUserFormContent').html(data.form);
-                        $('#editUserForm').attr('action', data.url);
-                    }
-                });
-            });
-
-            $('#editUserForm').submit(function(event) {
-                event.preventDefault();
-                var form = $(this);
-                $.ajax({
-                    url: form.attr('action'),
-                    method: form.attr('method'),
-                    data: form.serialize(),
-                    success: function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            $('#editUserFormContent').html(response.form);
-                        }
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>

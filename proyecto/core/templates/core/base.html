@@ -30,11 +30,9 @@
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Nosotros</a>
                     </li>
                     {% if is_admin %}
+                        
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Registrar usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'lista_usuarios' %}">Mantenedor de Usuarios</a>
+                            <a class="nav-link" href="{% url 'lista_usuarios' %}">Edición de Usuarios</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
@@ -77,25 +75,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#contactForm').on('submit', function (event) {
-                event.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        alert(response.message);
-                        $('#contactForm')[0].reset();
-                        $('#contactModal').modal('hide');
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>
