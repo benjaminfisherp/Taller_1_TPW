@@ -15,8 +15,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
-    <link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
-    <!--<script src="{% static 'index/js/b4.js' %}">-->
 
     <style></style>
 
@@ -65,6 +63,48 @@
         </div>
     </div>
 
+    <!-- Modal de confirmación para especies-->
+    <div class="modal fade" id="deleteModalEspe" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabelEspe" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabelEspe">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro que deseas eliminar a <span id="EspeNombre"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteEspe">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para variedades-->
+    <div class="modal fade" id="deleteModalVar" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabelVar" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabelVar">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro que deseas eliminar a <span id="varNombre"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteVar">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <br><br>
         <div class="row">
@@ -74,12 +114,6 @@
 
                 <!--BOTON TABLA CLIENTES-->
                 <button id="show-table-cliente" class="btn btn-primary w-100 mb-2">Clientes</button>
-
-                <!--BOTON TABLA INGRESOS-->
-                <button id="show-table-ing" class="btn btn-primary w-100 mb-2">Ingresos</button>
-
-                <!--BOTON TABLA EGRESOS-->
-                <button id="show-table-egr" class="btn btn-primary w-100 mb-2">Egresos</button>
 
                 <!--BOTON TABLA ESPECIE-->
                 <button id="show-table-esp" class="btn btn-primary w-100 mb-2">Especies</button>
@@ -268,11 +302,11 @@
                     }
                 });
             });
-    
-            // Función para mostrar la tabla de ingresos
-            $('#show-table-ing').click(function () {
+
+            // Función para mostrar la tabla de especies
+            $('#show-table-esp').click(function () {
                 $.ajax({
-                    url: '{% url "table_view_ing" %}',
+                    url: '{% url "table_view_especies" %}',
                     type: 'GET',
                     success: function (response) {
                         console.log(response.data); // Debug line
@@ -280,58 +314,59 @@
                         let table = `
                             <table class="table table-bordered table-striped" style="text-align: center;">
                                 <thead>
-                                    <tr>
-                                        <th>Rut proveedor</th>
-                                        <th>Código</th>
-                                        <th>Fecha de ingreso</th>
-                                        <th>Especie</th>
-                                        <th>Variedad</th>
-                                        <th>Calidad</th>
-                                        <th>Cantidad</th>
-                                        <th><button class="btn btn-success w-100 mb-2">Añadir Ingreso</button></th>
+                                    <tr>                        
+                                        <th>Nombre especie</th>
+                                        <th>
+                                            <a href="{% url 'agregar_especie' %}" data-toggle="modal" data-dismiss="modal">
+                                                <button class="btn btn-success w-100 mb-2">Agregar especie</button>
+                                            </a>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
-                        
+
                         data.forEach(function (item) {
-                            table += `
-                                <tr>
-                                    <td>${item.rut_prov_ing_id}</td>
-                                    <td>${item.codigo_fruta_ing}</td>
-                                    <td>${item.order_date_ing}</td>
-                                    <td>${item.especie_id}</td>
-                                    <td>${item.variedad_id}</td>
-                                    <td>${item.calidad_fruta_ing}</td>
-                                    <td>${item.cantidad_ing}</td>
+                            console.log("Item ID:", item.id);
+                            if (item.id) {
+                                let modificarUrl = "{% url 'modificar_especie' especie_id=0 %}".replace('0', item.id);
+                                table += `
+                                <tr>                 
+                                    <td>${item.especie}</td>
                                     <td>
-                                        <button class="btn btn-warning w-100 mb-2">Modificar</button>
-                                        <button class="btn btn-danger w-100 mb-2" data-id="${item.id}" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                                        <a href="${modificarUrl}" class="btn btn-warning w-100 mb-2">Modificar</a>
+                                        <button class="btn btn-danger delete-espe-btn" data-id="${item.id}" data-name_espe="${item.especie}" data-bs-toggle="modal" data-bs-target="#deleteModalEspe">Eliminar</button>
                                     </td>
                                 </tr>`;
+                            } else {
+                                console.error("Item ID is missing for item:", item);
+                            }
                         });
-    
+
                         table += `
                                 </tbody>
                             </table>`;
                         $('#table-container').html(table);
-    
-                        $(document).on('click', '.delete-ing-btn', function () {
-                            var ingId = $(this).data('id');
-                            $('#confirm-delete-ing').data('id', ingId);
-                            $('#deleteModal').modal('show');
+
+                        // FUNCIÓN PARA ELIMINAR ESPECIE
+                        $(document).on('click', '.delete-espe-btn', function () {
+                            var especieId = $(this).data('id');
+                            var EspeName = $(this).data('name_espe');
+                            $('#EspeNombre').text(EspeName);
+                            $('#confirmDeleteEspe').data('id', especieId);
+                            $('#deleteModalEspe').modal('show');
                         });
-    
-                        $('#confirm-delete-ing').click(function () {
-                            var ingId = $(this).data('id');
+
+                        $('#confirmDeleteEspe').click(function () {
+                            var especieId = $(this).data('id');
                             $.ajax({
-                                url: '/eliminar_ing/' + ingId + '/',
+                                url: '/eliminar_especie/' + especieId + '/',
                                 type: 'POST',
                                 data: {
                                     csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 success: function (response) {
-                                    $('#deleteModal').modal('hide');
-                                    $('#show-table-ing').click();
+                                    $('#deleteModalEspe').modal('hide');
+                                    $('#show-table-esp').click();
                                 },
                                 error: function (xhr, errmsg, err) {
                                     console.log(xhr.status + ": " + xhr.responseText);
@@ -342,5 +377,77 @@
                 });
             });
         });
+
+            // Función para mostrar la tabla de variedades
+            $('#show-table-var').click(function () {
+            $.ajax({
+                url: '{% url "table_view_variedades" %}',
+                type: 'GET',
+                success: function (response) {
+                    let data = response.data;
+                    let table = `
+                        <table class="table table-bordered table-striped" style="text-align: center;">
+                            <thead>
+                                <tr>
+                                    <th>Nombre especie</th>
+                                    <th>Nombre variedad</th>
+                                    <th>
+                                        <a href="{% url 'agregar_variedad' %}" data-toggle="modal" data-dismiss="modal">
+                                            <button class="btn btn-success w-100 mb-2">Agregar variedad</button>
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                    data.forEach(function (item) {
+                        if (item.id) {
+                            let modificarUrl = "{% url 'modificar_variedad' variedad_id=0 %}".replace('0', item.id);
+                            table += `
+                                <tr>
+                                    <td>${item['especie__especie']}</td>
+                                    <td>${item.variedad}</td>
+                                    <td>
+                                        <a href="${modificarUrl}" class="btn btn-warning">Modificar</a>
+                                        <button class="btn btn-danger delete-variedad-btn" data-id="${item.id}" data-name="${item.variedad}" data-bs-toggle="modal" data-bs-target="#deleteModalVar">Eliminar</button>
+                                    </td>
+                                </tr>`;
+                        }
+                    });
+
+                    table += `
+                            </tbody>
+                        </table>`;
+                    $('#table-container').html(table);
+
+                    // Función para eliminar variedad
+                    $(document).on('click', '.delete-variedad-btn', function () {
+                        var variedadId = $(this).data('id');
+                        var variedadName = $(this).data('name');
+                        $('#varNombre').text(variedadName);
+                        $('#confirmDeleteVar').data('id', variedadId);
+                        $('#deleteModalVar').modal('show');
+                    });
+
+                    $('#confirmDeleteVar').click(function () {
+                        var variedadId = $(this).data('id');
+                        $.ajax({
+                            url: '/eliminar_variedad/' + variedadId + '/',
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                            success: function (response) {
+                                $('#deleteModalVar').modal('hide');
+                                $('#show-table-var').click(); // Refresh the table
+                            }
+                        });
+                    });
+                }
+            });
+        });
+           
+        // FUNCION PARA MODIFICAR VARIEDADES
+
     </script>        
     {% endblock %}

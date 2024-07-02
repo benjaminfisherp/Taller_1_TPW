@@ -11,7 +11,7 @@ class TablaCliente(models.Model):
     rut = models.CharField(max_length=100, unique=True)
     correo = models.EmailField(null=False, blank=False)
     telefono = models.IntegerField(unique=False) 
-    razon_social = models.CharField(max_length=100,default=' - ')
+    razon_social = models.CharField(max_length=100,default='')
 
     def __str__(self):
         return self.rut
@@ -34,49 +34,86 @@ class TablaProv(models.Model):
 #TABLA ESPECIE
 class TablaEspecie(models.Model):
     especie = models.CharField(max_length=100, unique=True)
-
     def __str__(self):
         return self.especie
-
+    
+# TABLA CALIDAD
+class TablaCalidad(models.Model):
+    calidad = models.CharField(max_length=100, unique=True)
+    def __str__(self):
+        return self.calidad
+    
 #TABLA VARIEDAD
 class TablaVariedad(models.Model):
     variedad = models.CharField(max_length=100, unique=True)
     especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE, to_field='especie')
+    cantidad_total = models.PositiveBigIntegerField(default=0)
+    calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE, to_field='calidad')
+    
+    def actualizar_cantidad(self, cambio):
+        self.cantidad_total += cambio
+        if self.cantidad_total < 0:
+            raise ValueError("No se puede tener una cantidad negativa.")
+        self.save()
 
     def __str__(self):
         return self.variedad
+        #return f"Variedad '{self.variedad}' de {self.especie} con un total de {self.cantidad_total} (kg) y calidad {self.calidad}"
 
-#ORDEN DE EGRESO DE FRUTA
-class Egreso(models.Model):
-
-    #egr <- egreso
-    rut_prov_egr = models.ForeignKey(TablaCliente, on_delete=models.CASCADE, to_field='rut')
-    codigo_fruta_egr = models.CharField(max_length=100)
-    order_date_egr = models.DateTimeField()
-    especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE, to_field='especie')
-    variedad = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE, to_field='variedad')
-    calidad_fruta_egr = models.CharField(max_length=100)
-    cantidad_egr = models.CharField(max_length=100)
+# ORDEN DE INGRESO DE FRUTA
+class OrdenIngreso(models.Model):
+    proveedor = models.ForeignKey(TablaProv, on_delete=models.CASCADE)
+    fecha_ingreso = models.DateField()
 
     def __str__(self):
-        return self.rut_prov_egr_id
+        return f"{self.id} - {self.proveedor.rut_prov} - {self.proveedor.name_prov}"
     
-#ORDEN DE INGRESO DE FRUTA
-class Ingreso(models.Model):
-    
-    #ing <- ingreso
-    rut_prov_ing = models.ForeignKey(TablaProv, on_delete=models.CASCADE, to_field='rut_prov')
-    codigo_fruta_ing = models.CharField(max_length=100)
-    order_date_ing = models.DateTimeField()
-    especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE, to_field='especie')
-    variedad = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE, to_field='variedad')
-    calidad_fruta_ing = models.CharField(max_length=100)
-    cantidad_ing = models.CharField(max_length=100)
+class OrdenIngresoDetalle(models.Model):
+    id_orden_ingreso = models.ForeignKey(OrdenIngreso, on_delete=models.CASCADE)
+    fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    cantidad = models.PositiveBigIntegerField()
+    def save(self, *args, **kwargs):
+        self.fruta.cantidad_total += self.cantidad
+        self.fruta.save()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.fruta.cantidad_total -= self.cantidad
+        if self.fruta.cantidad_total < 0:
+            raise ValueError("No se puede eliminar más cantidad de la disponible.")
+        self.fruta.save()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.rut_prov_ing_id
+        return f"{self.id_orden_ingreso.proveedor} - {self.id_orden_ingreso.proveedor.name_prov}" 
     
+# ORDEN DE EGRESO DE FRUTA
+class OrdenEgreso(models.Model):
+    cliente = models.ForeignKey(TablaCliente, on_delete=models.CASCADE)
+    fecha_ingreso = models.DateField()
 
+    def __str__(self):
+        return f"{self.id} - {self.cliente.rut} - {self.cliente.name}"
+
+class OrdenEgresoDetalle(models.Model):
+    id_orden_egreso = models.ForeignKey(OrdenEgreso, on_delete=models.CASCADE)
+    fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    cantidad = models.PositiveBigIntegerField()
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.fruta.actualizar_cantidad(-self.cantidad)
+        else:
+            old_instance = OrdenEgresoDetalle.objects.get(pk=self.pk)
+            self.fruta.actualizar_cantidad(old_instance.cantidad - self.cantidad)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.fruta.actualizar_cantidad(self.cantidad)
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id_orden_egreso.cliente} - {self.id_orden_egreso.cliente.name}" 
+    
 # MODELOS ORIENTADOS A LOS ROLES------------------------------------------
 
 # cuenta de usuario
