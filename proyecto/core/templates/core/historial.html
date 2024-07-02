@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,11 +28,12 @@
                     {% if user.is_authenticated %}
                         {% if is_admin %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'register' %}">Registrar usuarios</a>
+                                <a class="nav-link" href="{% url 'products' %}">Productos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'lista_usuarios' %}">Mantenedor de Usuarios</a>
+                                <a class="nav-link" href="{% url 'lista_usuarios' %}">Edicion de usuarios</a>
                             </li>
+                            
                         {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'exit' %}">Cerrar sesión</a>

@@ -170,7 +170,7 @@
                                     <td>${item.correo}</td>
                                     <td>${item.razon_social}</td>
                                     <td>
-                                        <a href="${modificarUrl}" class="btn btn-warning">Modificar</a>
+                                        <a href="${modificarUrl}" class="btn btn-warning mb-2">Modificar</a>
                                         <button class="btn btn-danger delete-cliente-btn" data-id="${item.id}" data-name="${item.name}" data-bs-toggle="modal" data-bs-target="#deleteModalCLIENTE">Eliminar</button>
                                     </td>
                                 </tr>`;
@@ -223,7 +223,7 @@
                         console.log(response.data); // Línea de depuración
                         let data = response.data;
                         let table = `
-                            <table class="table table-bordered table-striped" style="text-align: center;">
+                            <table class="table table-bordered table-striped " style="text-align: center;">
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
@@ -259,7 +259,7 @@
                                         <td>${item.comuna_prov}</td>
                                         <td>${item.ncontacto_prov}</td>
                                         <td>
-                                            <a href="${modificarUrl}" class="btn btn-warning">Modificar</a>
+                                            <a href="${modificarUrl}" class="btn btn-warning mb-2">Modificar</a>
                                             <button class="btn btn-danger delete-prov-btn" data-id="${item.id}" data-name_prov="${item.name_prov}" data-bs-toggle="modal" data-bs-target="#deleteModalProv">Eliminar</button>
                                         </td>
                                     </tr>`;
@@ -333,7 +333,7 @@
                                 <tr>                 
                                     <td>${item.especie}</td>
                                     <td>
-                                        <a href="${modificarUrl}" class="btn btn-warning w-100 mb-2">Modificar</a>
+                                        <a href="${modificarUrl}" class="btn btn-warning ">Modificar</a>
                                         <button class="btn btn-danger delete-espe-btn" data-id="${item.id}" data-name_espe="${item.especie}" data-bs-toggle="modal" data-bs-target="#deleteModalEspe">Eliminar</button>
                                     </td>
                                 </tr>`;
