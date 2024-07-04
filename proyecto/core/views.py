@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required # Incorporacion de "de
 from django.contrib.auth import logout
 from .forms import CustomUserCreationForm, ClienteForm, ProvForm, EspecieForm, OrdenIngresoForm, OrdenIngresoDetalleForm
 from django.contrib.auth import authenticate, login # Metodo para que despues de guardar registro inicia automaticamente la sesion
-from .models import TablaCliente, TablaProv, TablaEspecie, TablaVariedad, OrdenIngresoDetalle, OrdenIngreso
+from .models import TablaCliente, TablaProv, TablaEspecie, TablaVariedad
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
@@ -13,16 +13,16 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CustomUserChangeForm, VariedadForm
 from django.template.loader import render_to_string
 from django import forms
+from . import models
 
 @login_required
 def home(request):
     is_admin = request.user.is_authenticated and (request.user.is_superuser or request.user.groups.filter(name='Administrativos').exists())
     return render(request, 'core/home.html', {'is_admin': is_admin})
 
-
 def products(request):
-    cliente = TablaCliente.objects.all()
-    proveedores = TablaProv.objects.all()
+    cliente = TablaCliente.objects.all() #?
+    proveedores = TablaProv.objects.all() #?
     is_admin = request.user.is_superuser or request.user.groups.filter(name='Administrativos').exists()
     return render(request, 'core/products.html', {'proveedores': proveedores, 'is_admin': is_admin})
 
@@ -53,8 +53,6 @@ def register(request):
             data['form'] = user_creation_form
 
     return render(request, 'registration/register.html', data)
-
-# - - - - - - - - - - - - - - - FUNCIONES DE CLIENTES - - - - - - - - - - -
 
 #FUNCION PARA VISUALIZAR LA TABLA DE CLIENTE
 def table_view_cliente(request):
@@ -99,9 +97,6 @@ def modificar_cliente(request, cliente_id):
 
     return render(request, 'core/modificar_cliente.html', {'form': form, 'cliente': cliente})
     
-
-# - - - - - - - - - - - FUNCIONES DE PROVEEDORES - - - - - - - - - - - - - - - -
-
 #FUNCION PARA VISUALIZAR LA TABLA DE PROVEEDORES
 def table_view_prov(request):
     if request.method == "GET":
@@ -142,7 +137,6 @@ def modificar_prov(request, prov_id):
             return redirect('products')
     else:
         form = ProvForm(instance=proveedor)
-
     return render(request, 'core/modificar_prov.html', {'form': form, 'proveedor': proveedor})
 
 #FUNCION PARA VISUALIZAR LA TABLA DE ESPECIES
@@ -173,7 +167,6 @@ def modificar_especie(request, especie_id):
             return redirect('products')
     else:
         form = EspecieForm(instance=especie)
-
     return render(request, 'core/modificar_especie.html', {'form': form, 'especie': especie})
 
 @user_passes_test(is_admin)
@@ -184,8 +177,6 @@ def eliminar_especie(request, especie_id):
         return HttpResponse('Especie eliminada correctamente', status=200)
     else:
         return HttpResponse('Método no permitido', status=405)
-
-# - - - - - - - - - - - FUNCIONES PARA VARIEDADES - - - - - - - - - - - - - - 
 
 #FUNCION PARA VISUALIZAR LA TABLA DE VARIEDADES
 @user_passes_test(is_admin)
@@ -224,35 +215,6 @@ def eliminar_variedad(request, variedad_id):
         return HttpResponse('Variedad eliminada correctamente', status=200)
     else:
         return HttpResponse('Método no permitido', status=405)
-
-#otrasfunciones
-
-#FUNCION PARA VISUALIZAR TABLA STOCK
-def list_stock(request):
-    productos = TablaVariedad.objects.all() 
-    return render(request, 'core/lista_stock.html', {'productos': productos})
-
-# FUNCION PARA AGREGAR STOCK
-@user_passes_test(is_admin)
-def add_orden_ingreso(request):
-    if request.method == 'POST':
-        form_ingreso = OrdenIngresoForm(request.POST)
-        form_detalle = OrdenIngresoDetalleForm(request.POST)
-        if form_ingreso.is_valid() and form_detalle.is_valid():
-            orden_ingreso = form_ingreso.save()  
-            detalle = form_detalle.save(commit=False)
-            detalle.id_orden_ingreso = orden_ingreso
-            detalle.save()  
-            return redirect('list_stock')  
-    else:
-        form_ingreso = OrdenIngresoForm()
-        form_detalle = OrdenIngresoDetalleForm()
-    
-    context = {
-        'form_ingreso': form_ingreso,
-        'form_detalle': form_detalle,
-    }
-    return render(request, 'core/lista_stock.html', context)
 
 # FUNCIONES ORIENTADOS A LOS ROLES------------------------------------------
 
@@ -298,3 +260,41 @@ def eliminar_usuarios(request, user_id):
 def view_historial(request):
     is_admin = request.user.is_authenticated and (request.user.is_superuser or request.user.groups.filter(name='Administrativos').exists())
     return render(request, 'core/historial.html', {'is_admin': is_admin})
+
+#INGRESOS
+def view_ingresos(request):
+    ingresos = models.OrdenIngreso.objects.all()
+    return render(request, 'core/lista_ingresos.html', {'ingresos': ingresos})
+
+def view_detalle_ingreso(request, id):
+    detalles = models.OrdenIngresoDetalle.objects.filter(id=id)
+    return render(request, 'core/lista_detalle_ingreso.html', {'detalles': detalles})
+
+#EGRESOS
+def view_egresos(request):
+    egresos = models.OrdenEgreso.objects.all()
+    return render(request, 'core/lista_egresos.html', {'egresos': egresos})
+
+def view_detalle_egreso(request, id):
+    detalles_e = models.OrdenEgresoDetalle.objects.filter(id=id)
+    return render(request, 'core/lista_detalle_egreso.html', {'detalles_e': detalles_e})
+
+def add_ingreso(request):
+    if request.method=='POST':
+        form = OrdenIngresoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'core/lista_ingresos.html', {'form': form})
+    else:
+        form = OrdenIngresoForm()
+    return render(request,'core/agregar_ingreso.html', {'form': form})
+
+def add_detalle_ingreso(request,id):
+    if request.method=="POST":
+        form = OrdenIngresoDetalleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'core/lista_ingresos.html', {'form': form})
+    else:
+        form = OrdenIngresoDetalleForm()
+    return render(request, 'core/agregar_detalle_ingreso.html', {'form': form})

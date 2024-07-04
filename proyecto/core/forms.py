@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User # Importa la base de datos de usuarios para tener mayor cantidad de data para el registro (mail y demas)
 from django.contrib.auth import get_user_model
 from core.models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, OrdenIngreso, OrdenIngresoDetalle
+from . import models
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -50,7 +51,7 @@ class EspecieForm(forms.ModelForm):
 class VariedadForm(forms.ModelForm):
     class Meta:
         model = TablaVariedad
-        fields = ['especie', 'variedad', 'cantidad_total', 'calidad']
+        fields = ['especie', 'variedad']
         
 # FORMULARIO DE LA ORDENES DE INGRESO
 class OrdenIngresoForm(forms.ModelForm):
@@ -58,8 +59,13 @@ class OrdenIngresoForm(forms.ModelForm):
         model = OrdenIngreso
         fields = ['proveedor', 'fecha_ingreso']
 
+# class OrdenIngresoDetalleForm(forms.ModelForm):
+#     class Meta:
+#         model = OrdenIngresoDetalle
+#         fields = ['id_orden_ingreso', 'fruta', 'calidad','cantidad']
+
+
 class OrdenIngresoDetalleForm(forms.ModelForm):
     class Meta:
         model = OrdenIngresoDetalle
-        fields = ['id_orden_ingreso', 'fruta', 'cantidad']
-   
+        fields = ['id_orden_ingreso','fruta','calidad','cantidad']

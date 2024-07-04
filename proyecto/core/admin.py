@@ -20,7 +20,7 @@ class TablaClienteAdmin(admin.ModelAdmin):
 
 @admin.register(TablaVariedad)
 class TablaVariedadAdmin(admin.ModelAdmin):
-	list_display = ('variedad', 'especie', 'cantidad_total', 'calidad')
+	list_display = ('variedad', 'especie')
 	search_fields = ('variedad', 'especie')
       
 @admin.register(OrdenIngreso)
@@ -30,17 +30,17 @@ class OrdenIngresoAdmin(admin.ModelAdmin):
 
 @admin.register(OrdenIngresoDetalle)
 class OrdenIngresoDetalleAdmin(admin.ModelAdmin):
-    list_display = ('id_orden_ingreso', 'fruta', 'cantidad')
+    list_display = ('id_orden_ingreso', 'fruta','calidad','cantidad')
     list_filter = ('id_orden_ingreso__proveedor', 'fruta__variedad')
     
 @admin.register(OrdenEgreso)
 class OrdenEgresoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cliente', 'fecha_ingreso')
-    list_filter = ('cliente', 'fecha_ingreso')
+    list_display = ('id', 'cliente', 'fecha_egreso')
+    list_filter = ('cliente', 'fecha_egreso')
 
 @admin.register(OrdenEgresoDetalle)
 class OrdenEgresoDetalleAdmin(admin.ModelAdmin):
-    list_display = ('id_orden_egreso', 'fruta', 'cantidad')
+    list_display = ('id_orden_egreso', 'fruta','calidad' ,'cantidad')
     list_filter = ('id_orden_egreso__cliente', 'fruta__variedad')
     
 # Cuenta detallada
