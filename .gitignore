@@ -2,12 +2,12 @@
 *.log
 *.pot
 *.pyc
-proyecto/__pycache__
+proyecto/__pycache_/_
 proyecto/db.sqlite3
 proyecto/media
-proyecto/core/__pycache__
-proyecto/core/migrations/__pycache__
-proyecto/proyecto/__pycache__
+proyecto/core/__pycache__/
+proyecto/core/migrations/__pycache__/
+proyecto/proyecto/__pycache__/
 # Backup files # 
 *.bak 
 
