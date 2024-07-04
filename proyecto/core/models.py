@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
-
-
 #TABLA DE CLIENTES
 class TablaCliente(models.Model):
     name = models.CharField(max_length=100, null=False)
@@ -47,18 +45,9 @@ class TablaCalidad(models.Model):
 class TablaVariedad(models.Model):
     variedad = models.CharField(max_length=100, unique=True)
     especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE, to_field='especie')
-    cantidad_total = models.PositiveBigIntegerField(default=0)
-    calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE, to_field='calidad')
-    
-    def actualizar_cantidad(self, cambio):
-        self.cantidad_total += cambio
-        if self.cantidad_total < 0:
-            raise ValueError("No se puede tener una cantidad negativa.")
-        self.save()
 
     def __str__(self):
         return self.variedad
-        #return f"Variedad '{self.variedad}' de {self.especie} con un total de {self.cantidad_total} (kg) y calidad {self.calidad}"
 
 # ORDEN DE INGRESO DE FRUTA
 class OrdenIngreso(models.Model):
@@ -71,18 +60,8 @@ class OrdenIngreso(models.Model):
 class OrdenIngresoDetalle(models.Model):
     id_orden_ingreso = models.ForeignKey(OrdenIngreso, on_delete=models.CASCADE)
     fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE)
     cantidad = models.PositiveBigIntegerField()
-    def save(self, *args, **kwargs):
-        self.fruta.cantidad_total += self.cantidad
-        self.fruta.save()
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.fruta.cantidad_total -= self.cantidad
-        if self.fruta.cantidad_total < 0:
-            raise ValueError("No se puede eliminar más cantidad de la disponible.")
-        self.fruta.save()
-        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id_orden_ingreso.proveedor} - {self.id_orden_ingreso.proveedor.name_prov}" 
@@ -90,7 +69,7 @@ class OrdenIngresoDetalle(models.Model):
 # ORDEN DE EGRESO DE FRUTA
 class OrdenEgreso(models.Model):
     cliente = models.ForeignKey(TablaCliente, on_delete=models.CASCADE)
-    fecha_ingreso = models.DateField()
+    fecha_egreso = models.DateField()
 
     def __str__(self):
         return f"{self.id} - {self.cliente.rut} - {self.cliente.name}"
@@ -98,18 +77,8 @@ class OrdenEgreso(models.Model):
 class OrdenEgresoDetalle(models.Model):
     id_orden_egreso = models.ForeignKey(OrdenEgreso, on_delete=models.CASCADE)
     fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE)
     cantidad = models.PositiveBigIntegerField()
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.fruta.actualizar_cantidad(-self.cantidad)
-        else:
-            old_instance = OrdenEgresoDetalle.objects.get(pk=self.pk)
-            self.fruta.actualizar_cantidad(old_instance.cantidad - self.cantidad)
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.fruta.actualizar_cantidad(self.cantidad)
-        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id_orden_egreso.cliente} - {self.id_orden_egreso.cliente.name}" 
@@ -137,8 +106,6 @@ def save_user_account(sender, instance, **kwargs):
 post_save.connect(create_user_account, sender=User)
 post_save.connect(save_user_account, sender=User)
 
-
-
 class CustomUser(AbstractUser):
     groups = models.ManyToManyField(
         Group,
@@ -159,4 +126,3 @@ class CustomUser(AbstractUser):
     @property
     def is_administrativos(self):
         return self.groups.filter(name='Administrativos').exists()
-
