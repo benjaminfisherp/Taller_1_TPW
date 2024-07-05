@@ -38,8 +38,9 @@ class TablaEspecie(models.Model):
 # TABLA CALIDAD
 class TablaCalidad(models.Model):
     calidad = models.CharField(max_length=100, unique=True)
+    
     def __str__(self):
-        return self.calidad
+        return f"{self.id} - {self.calidad}"
     
 #TABLA VARIEDAD
 class TablaVariedad(models.Model):
@@ -59,7 +60,8 @@ class OrdenIngreso(models.Model):
     
 class OrdenIngresoDetalle(models.Model):
     id_orden_ingreso = models.ForeignKey(OrdenIngreso, on_delete=models.CASCADE)
-    fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE)
+    variedad = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
     calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE)
     cantidad = models.PositiveBigIntegerField()
 
@@ -76,12 +78,13 @@ class OrdenEgreso(models.Model):
 
 class OrdenEgresoDetalle(models.Model):
     id_orden_egreso = models.ForeignKey(OrdenEgreso, on_delete=models.CASCADE)
-    fruta = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
+    especie = models.ForeignKey(TablaEspecie, on_delete=models.CASCADE)
+    variedad = models.ForeignKey(TablaVariedad, on_delete=models.CASCADE)
     calidad = models.ForeignKey(TablaCalidad, on_delete=models.CASCADE)
     cantidad = models.PositiveBigIntegerField()
 
     def __str__(self):
-        return f"{self.id_orden_egreso.cliente} - {self.id_orden_egreso.cliente.name}" 
+        return f"{self.id_orden_egreso.cliente} - {self.id_orden_egreso.cliente.name}"
     
 # MODELOS ORIENTADOS A LOS ROLES------------------------------------------
 

@@ -27,8 +27,8 @@
                     {% for detalle in detalles %}
                     <tr>
                         <td>{{detalle.id}}</td>
-                        <td>{{detalle.fruta.especie.especie}}</td>
-                        <td>{{detalle.fruta.variedad}}</td>
+                        <td>{{detalle.variedad.especie}}</td>
+                        <td>{{detalle.variedad.variedad}}</td>
                         <td>{{detalle.calidad.calidad}}</td>
                         <td>{{detalle.cantidad}}</td>
                     </tr>

@@ -33,10 +33,13 @@
                         <td>{{ ingreso.proveedor.rut_prov }}</td>
                         <td>{{ ingreso.fecha_ingreso }}</td>
                         <td>
-                            <a class="btn btn-success" href="{% url 'add_detalle_ingreso' ingreso.id %}"> Añadir detalles</a>
+                            <a class="btn btn-success" href="{% url 'add_detalle_ingreso' ingreso.id%}"> Añadir detalles</a>
                         </td>
                         <td>
-                            <a class="btn btn-danger"> Eliminar Ingreso</a>
+                            <form action="{% url 'eliminar_ingreso' ingreso.id %}" id="delete-form-{{ ingreso.id }}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -48,6 +51,30 @@
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete(ingresoId) {
+            if (confirm('¿Está seguro de que desea eliminar este ingreso?')) {
+                var form = $('#delete-form-' + ingresoId);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function(response) {
+                        $('#ingreso-' + ingresoId).remove();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al eliminar el ingreso: ' + error);
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            $('.delete-ingreso-form').on('submit', function(e) {
+                e.preventDefault();
+            });
+        });
+    </script>
 </body>
 </html>
 {% endblock %}

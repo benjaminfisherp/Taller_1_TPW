@@ -1,9 +1,7 @@
 from django.contrib import admin
 from .models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, Account, OrdenIngreso, OrdenIngresoDetalle, OrdenEgresoDetalle, OrdenEgreso, TablaCalidad
-from . import models
 
 # Register your models here.
-#admin.site.register(TablaVariedad)  # PERMISO PARA AÑADIR REGISTROS DE VARIEDAD COMO ADMIN
 admin.site.register(TablaEspecie)  # PERMISO PARA AÑADIR REGISTROS DE ESPECIE COMO ADMIN
 admin.site.register(TablaCalidad)
 
@@ -30,8 +28,8 @@ class OrdenIngresoAdmin(admin.ModelAdmin):
 
 @admin.register(OrdenIngresoDetalle)
 class OrdenIngresoDetalleAdmin(admin.ModelAdmin):
-    list_display = ('id_orden_ingreso', 'fruta','calidad','cantidad')
-    list_filter = ('id_orden_ingreso__proveedor', 'fruta__variedad')
+    list_display = ('id_orden_ingreso', 'especie','variedad','calidad','cantidad')
+    list_filter = ('id_orden_ingreso__proveedor', 'especie','variedad')
     
 @admin.register(OrdenEgreso)
 class OrdenEgresoAdmin(admin.ModelAdmin):
@@ -40,8 +38,8 @@ class OrdenEgresoAdmin(admin.ModelAdmin):
 
 @admin.register(OrdenEgresoDetalle)
 class OrdenEgresoDetalleAdmin(admin.ModelAdmin):
-    list_display = ('id_orden_egreso', 'fruta','calidad' ,'cantidad')
-    list_filter = ('id_orden_egreso__cliente', 'fruta__variedad')
+    list_display = ('id_orden_egreso', 'especie','variedad','calidad' ,'cantidad')
+    list_filter = ('id_orden_egreso__cliente', 'especie','variedad')
     
 # Cuenta detallada
 class AccountAdmin(admin.ModelAdmin):

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User # Importa la base de datos de usuarios para tener mayor cantidad de data para el registro (mail y demas)
 from django.contrib.auth import get_user_model
-from core.models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, OrdenIngreso, OrdenIngresoDetalle
+from core.models import TablaCliente, TablaProv, TablaVariedad, TablaEspecie, OrdenIngreso, OrdenIngresoDetalle, TablaCalidad
 from . import models
 
 class CustomUserCreationForm(UserCreationForm):
@@ -53,19 +53,37 @@ class VariedadForm(forms.ModelForm):
         model = TablaVariedad
         fields = ['especie', 'variedad']
         
+class CalidadForm(forms.ModelForm):
+    class Meta:
+        model = TablaCalidad
+        fields = ['calidad']
+        
 # FORMULARIO DE LA ORDENES DE INGRESO
 class OrdenIngresoForm(forms.ModelForm):
     class Meta:
         model = OrdenIngreso
         fields = ['proveedor', 'fecha_ingreso']
 
-# class OrdenIngresoDetalleForm(forms.ModelForm):
-#     class Meta:
-#         model = OrdenIngresoDetalle
-#         fields = ['id_orden_ingreso', 'fruta', 'calidad','cantidad']
-
+        widgets = {
+            'fecha_ingreso': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 class OrdenIngresoDetalleForm(forms.ModelForm):
     class Meta:
         model = OrdenIngresoDetalle
-        fields = ['id_orden_ingreso','fruta','calidad','cantidad']
+        fields = ['id_orden_ingreso', 'especie', 'variedad', 'calidad', 'cantidad']
+
+# FORUMULARIO DE LAS ORDENES DE EGRESO
+class OrdenEgresoForm(forms.ModelForm):
+    class Meta:
+        model = models.OrdenEgreso
+        fields = ['cliente', 'fecha_egreso']
+
+        widgets = {
+            'fecha_egreso': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class OrdenEgresoDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.OrdenEgresoDetalle
+        fields = ['id_orden_egreso','especie','variedad','calidad','cantidad']

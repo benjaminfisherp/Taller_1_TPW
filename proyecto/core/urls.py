@@ -37,22 +37,29 @@ urlpatterns = [
     path('modificar_variedad/<int:variedad_id>/', views.modificar_variedad, name='modificar_variedad'),
     path('eliminar_variedad/<int:variedad_id>/', views.eliminar_variedad, name='eliminar_variedad'),
 
+    #URLS PARA CALIDAD
+    path('get-calidad-data/', views.table_view_calidad, name='table_view_calidad'),
+    path('agregar-calidad/', views.add_calidad, name="agregar_calidad"),
+    path('modificar_calidad/<int:calidad_id>/', views.modificar_calidad, name='modificar_calidad'),
+    path('eliminar_calidad/<int:calidad_id>/', views.eliminar_calidad, name='eliminar_calidad'),
+
     # URLS PARA HISTORIAL (INGRESO, EGRESO Y STOCK)
     path('historial/', views.view_historial, name="view_historial"),
 
+    #INGRESO
     path('view_ingresos/', views.view_ingresos, name="view_ingresos"),
     path('view_detalle_ingreso<int:id>', views.view_detalle_ingreso, name="view_detalle_ingreso"),
-
     path('add_ingreso/', views.add_ingreso,name="add_ingreso"),
     path('add_detalle_ingreso/<int:id>/',views.add_detalle_ingreso,name="add_detalle_ingreso"),
+    path('eliminar_ingreso/<int:ingreso_id>/', views.eliminar_ingreso, name='eliminar_ingreso'),
 
-    #ELIMINAR INGRESO
-
+    #EGRESO
     path('view_egresos/', views.view_egresos, name="view_egresos"),
     path('view_detalle_egreso<int:id>', views.view_detalle_egreso, name="view_detalle_egreso"),
+    path('add_egreso/', views.add_egreso,name="add_egreso"),
+    path('add_detalle_egreso/<int:id>/',views.add_detalle_egreso,name="add_detalle_egreso"),
+    path('eliminar_egreso/<int:egreso_id>/', views.eliminar_egreso, name='eliminar_egreso'),
 
-    #ADD EGRESO
-    #ADD DETALLE EGRESO
-
-    #ELIMINAR EGRESO
+    #PRUEBA STOCK
+    path('view_stock', views.view_stock, name="view_stock"),
 ]
